@@ -1,0 +1,20 @@
+# Local test only: docker compose -f compose.local.yml up --build (Railway builds each folder as its own service).
+services:
+  chibisafe:
+    build: ./server
+    environment:
+      ADMIN_PASSWORD: local-test-password-123
+      FRONTEND_HOST: frontend
+      PORT: "8080"
+    volumes:
+      - data:/data
+    ports:
+      - "42295:8080"
+    labels: [her=2295]
+  frontend:
+    build: ./frontend
+    environment:
+      BASE_API_URL: http://chibisafe:8000
+    labels: [her=2295]
+volumes:
+  data:

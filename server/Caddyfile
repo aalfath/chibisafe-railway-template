@@ -1,0 +1,41 @@
+{
+	admin off
+	auto_https off
+	servers {
+		trusted_proxies static private_ranges 100.64.0.0/10
+		client_ip_headers X-Real-IP X-Forwarded-For
+	}
+}
+
+:{$CADDY_PORT} {
+	route {
+		# Uploaded documents must not execute scripts or share the application's origin
+		# (same policy as upstream's Caddyfile).
+		@uploadedFile file {
+			root /app/uploads
+			try_files {path} {path}/index.html {path}/index.txt
+		}
+		handle @uploadedFile {
+			header {
+				Content-Security-Policy "sandbox; script-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+				X-Content-Type-Options nosniff
+				Access-Control-Allow-Origin *
+			}
+			file_server {
+				root /app/uploads
+				pass_thru
+			}
+		}
+
+		# The backend keeps the public Host header so the links it returns use your domain.
+		@api path /api/* /docs*
+		reverse_proxy @api 127.0.0.1:8000 {
+			header_up X-Real-IP {client_ip}
+		}
+
+		reverse_proxy {$FRONTEND_URL} {
+			header_up Host {http.reverse_proxy.upstream.hostport}
+			header_up X-Real-IP {client_ip}
+		}
+	}
+}
