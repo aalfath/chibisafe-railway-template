@@ -1,5 +1,7 @@
 # Chibisafe on Railway
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/chibisafe-1?utm_medium=integration&utm_source=button&utm_campaign=chibisafe)
+
 One-click Railway template for [Chibisafe](https://github.com/chibisafe/chibisafe), a self-hosted file uploader and sharing service with albums, share links, tags, an admin panel and a ShareX/API key workflow.
 
 **Version:** Chibisafe v6.7.0, built from the official images pinned by digest:
